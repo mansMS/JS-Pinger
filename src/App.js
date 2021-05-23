@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react'
+import './App.css'
 
 function App() {
+  const [url, setUrl] = useState('https://ya.ru/')
+  const [time, setTime] = useState(null)
+
+  function handleChange(e) {
+    setUrl(e.target.value)
+    setTime('')
+  }
+
+  async function ping() {
+    const img = new Image()
+    const start = (new Date()).getTime()
+    img.src = await url + '?random-no-cache=' + Math.floor((1 + Math.random()) * 0x10000).toString(16)
+
+    img.onload = () => {
+      const end = (new Date()).getTime()
+      setTime(end - start)
+    }
+    img.onerror = () => {
+      const end = (new Date()).getTime()
+      setTime(end - start)
+    }
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <input type="text" name="Url" value={url} onChange={handleChange} />
+      <button onClick={ping}>ping</button>
+      {time && <span>~{time}</span>}
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
